@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/trevmoody/aoc23/util"
+	"github.com/trevmoody/aoc2023/util"
 	"math"
 	"slices"
 	"strconv"

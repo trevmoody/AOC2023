@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/trevmoody/aoc23/util"
+	"github.com/trevmoody/aoc2023/util"
 	"testing"
 )
 

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"AOC2023/util"
 	"fmt"
+	"github.com/trevmoody/aoc2023/util"
 	"strings"
 )
 
