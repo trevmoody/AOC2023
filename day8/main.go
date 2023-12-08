@@ -9,44 +9,42 @@ import (
 
 func main() {
 	fmt.Printf("Running Part 1\n")
-	part1(*util.GetFileAsLines("input"))
+	part1(*util.GetFileAsLines("./day8/input"))
 
 }
 
-type element string
+type networkMap = map[string]map[string]string
 
 var handRegex = regexp.MustCompile(`[A-Z]{3}`)
 
 func part1(lines []string) int {
-	instructions := lines[0]
+	instructions := strings.Split(lines[0], "")
 
 	fmt.Printf("got instructions %v\n", instructions)
 
-	networkMap := map[string]map[string]string{} // size 2
+	myNetworkMap := networkMap{}
 
 	for i := 2; i < len(lines); i++ {
 		matches := handRegex.FindAllString(lines[i], -1)
-		networkMap[matches[0]] = map[string]string{"L": matches[1], "R": matches[2]}
+		myNetworkMap[matches[0]] = map[string]string{"L": matches[1], "R": matches[2]}
 	}
 
-	steps := 0
-	currentElement := "AAA"
-	destElement := "ZZZ"
-
-	for true {
-		for _, instruction := range strings.Split(instructions, "") {
-			currentElement = networkMap[currentElement][instruction]
-			steps += 1
-			if currentElement == destElement {
-				break
-			}
-		}
-		if currentElement == destElement {
-			break
-		}
-	}
-
+	steps := getStepsForElement("AAA", instructions, myNetworkMap)
 	fmt.Printf("Step Count = %d\n", steps)
-
 	return steps
+}
+
+func getStepsForElement(element string, instructionList []string, myNetworkMap networkMap) int {
+	steps := 0
+	currentElement := element
+	for {
+		for _, instruction := range instructionList {
+			if currentElement == "ZZZ" {
+				return steps
+			}
+
+			steps += 1
+			currentElement = myNetworkMap[currentElement][instruction]
+		}
+	}
 }
