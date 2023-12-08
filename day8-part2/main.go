@@ -35,10 +35,10 @@ func part2(lines []string) int {
 	//assume cyclical
 	var results []int
 
-	for i := 0; i < len(currentElements); i++ {
+	for _, currentElement := range currentElements {
 		found := false
 		steps := 0
-		currentElement := currentElements[i]
+
 		for found == false {
 			for _, instruction := range strings.Split(instructions, "") {
 				if strings.HasSuffix(currentElement, "Z") {
