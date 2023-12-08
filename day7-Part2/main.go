@@ -31,21 +31,23 @@ var cardToValue = map[string]int{
 	"J": 1,
 }
 
+type HandType int
+
 const ( // iota is reset to 0
-	HighCard     = iota
-	OnePair      = iota
-	TwoPair      = iota
-	ThreeOfAKind = iota
-	FullHouse    = iota
-	FourOfAKind  = iota
-	FiveOfAKind  = iota
+	HighCard HandType = iota
+	OnePair
+	TwoPair
+	ThreeOfAKind
+	FullHouse
+	FourOfAKind
+	FiveOfAKind
 )
 
 const joker = "J"
 
 type hand struct {
 	cards    string
-	handType int
+	handType HandType
 	bid      int
 }
 type handSlice []hand
@@ -59,7 +61,7 @@ var handRegex = regexp.MustCompile(`^([A-Za-z0-9]{5})\s?(\d+)$`)
 func newHand(cardString string, bid int) hand {
 	return hand{
 		cards:    cardString,
-		handType: handType(cardString),
+		handType: getHandType(cardString),
 		bid:      bid,
 	}
 
@@ -71,7 +73,7 @@ func newHandFromLine(line string) hand {
 	return newHand(match[0][1], bid)
 }
 
-func handType(cardString string) int {
+func getHandType(cardString string) HandType {
 
 	cardCountMap := map[string]int{}
 	jokerCount := 0
@@ -111,7 +113,7 @@ func handType(cardString string) int {
 	//sort them so we can work it out how many cards in most frequent
 	sort.Sort(sort.Reverse(sort.IntSlice(cardCounts)))
 
-	var handType int
+	var handType HandType
 
 	switch {
 	case cardCountLength == 1:
@@ -130,6 +132,7 @@ func handType(cardString string) int {
 		handType = HighCard
 
 	}
+
 	return handType
 }
 
@@ -171,7 +174,7 @@ func less(h1 hand, h2 hand) bool {
 
 	} else {
 		retVal := h1.handType < h2.handType
-		//fmt.Printf("Returning %v < %v : %t\n", h1.handType, h2.handType, retVal)
+		//fmt.Printf("Returning %v < %v : %t\n", h1.getHandType, h2.getHandType, retVal)
 		return retVal
 	}
 	//fmt.Printf("Returning default TRUE\n")
