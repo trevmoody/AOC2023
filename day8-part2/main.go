@@ -32,6 +32,28 @@ func part2(lines []string) int {
 		}
 	}
 
+	instructionList := strings.Split(instructions, "")
+	// check for cycles
+	//steps := 0
+	//testElement := currentElements[0]
+	//prevFoundStep := 0
+	//
+	//for steps < 1000000 {
+	//	for _, instruction := range instructionList {
+	//		if strings.HasSuffix(testElement, "Z") {
+	//			fmt.Printf("Got a Z at step %d, element is %s diff is %d \n", steps, testElement, steps-prevFoundStep)
+	//			prevFoundStep = steps
+	//		}
+	//
+	//		if strings.HasSuffix(testElement, "A") {
+	//			fmt.Printf("Got a A at step %d, element is %s\n", steps, testElement)
+	//		}
+	//
+	//		testElement = networkMap[testElement][instruction]
+	//		steps += 1
+	//	}
+	//}
+
 	//assume cyclical
 	var results []int
 
@@ -40,7 +62,7 @@ func part2(lines []string) int {
 		steps := 0
 
 		for found == false {
-			for _, instruction := range strings.Split(instructions, "") {
+			for _, instruction := range instructionList {
 				if strings.HasSuffix(currentElement, "Z") {
 					results = append(results, steps)
 					found = true
