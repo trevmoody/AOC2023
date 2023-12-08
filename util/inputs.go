@@ -11,7 +11,6 @@ import (
 func GetFileAsLines(fileName string) *[]string {
 
 	currentDir, _ := os.Getwd()
-
 	fmt.Printf("Current DIR: %s\n", currentDir)
 	file, err := os.Open(fileName)
 	if err != nil {
@@ -28,24 +27,24 @@ func GetFileAsLines(fileName string) *[]string {
 
 	scanner := bufio.NewScanner(file)
 
-	lines := []string{}
+	var lines []string
 
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
 	}
 
-	for i, line := range lines {
-		fmt.Printf("line %d: %s\n", i, line)
-	}
-
-	fmt.Printf("line count: %d\n", len(lines))
+	//for i, line := range lines {
+	//	fmt.Printf("line %d: %s\n", i, line)
+	//}
+	//
+	//fmt.Printf("line count: %d\n", len(lines))
 
 	return &lines
 }
 
 func StringsToInts(line string) []int {
 	fields := strings.Fields(line)
-	retList := []int{}
+	var retList []int
 	for _, f := range fields {
 		i, _ := strconv.Atoi(strings.TrimSpace(f))
 		retList = append(retList, i)

@@ -13,71 +13,54 @@ func main() {
 
 }
 
+type networkMap = map[string]map[string]string
+
 var regex = regexp.MustCompile(`[A-Z0-9]{3}`)
 
 func part2(lines []string) int {
-	instructions := lines[0]
+	instructionList := strings.Split(lines[0], "")
 
-	fmt.Printf("got instructions %v\n", instructions)
-
-	networkMap := map[string]map[string]string{} // size 2
-	var currentElements []string
-
-	for i := 2; i < len(lines); i++ {
-		matches := regex.FindAllString(lines[i], -1)
-		networkMap[matches[0]] = map[string]string{"L": matches[1], "R": matches[2]}
-
-		if strings.HasSuffix(matches[0], "A") {
-			currentElements = append(currentElements, matches[0])
-		}
-	}
-
-	instructionList := strings.Split(instructions, "")
-	// check for cycles
-	//steps := 0
-	//testElement := currentElements[0]
-	//prevFoundStep := 0
-	//
-	//for steps < 1000000 {
-	//	for _, instruction := range instructionList {
-	//		if strings.HasSuffix(testElement, "Z") {
-	//			fmt.Printf("Got a Z at step %d, element is %s diff is %d \n", steps, testElement, steps-prevFoundStep)
-	//			prevFoundStep = steps
-	//		}
-	//
-	//		if strings.HasSuffix(testElement, "A") {
-	//			fmt.Printf("Got a A at step %d, element is %s\n", steps, testElement)
-	//		}
-	//
-	//		testElement = networkMap[testElement][instruction]
-	//		steps += 1
-	//	}
-	//}
-
+	// parse map and find the start elements
+	startingElements, myNetworkMap := parseMapAndStartElements(lines)
 	//assume cyclical
 	var results []int
-
-	for _, currentElement := range currentElements {
-		found := false
-		steps := 0
-
-		for found == false {
-			for _, instruction := range instructionList {
-				if strings.HasSuffix(currentElement, "Z") {
-					results = append(results, steps)
-					found = true
-					break
-				}
-				steps += 1
-				currentElement = networkMap[currentElement][instruction]
-			}
-		}
+	for _, currentElement := range startingElements {
+		results = append(results, getStepsForElement(currentElement, instructionList, myNetworkMap))
 	}
 
 	lcm := getLeastCommonMultiple(results)
 	fmt.Printf("Step Count = %d\n", lcm)
 
 	return lcm
+}
+
+func parseMapAndStartElements(lines []string) ([]string, networkMap) {
+	var startingElements []string
+	myNetworkMap := make(networkMap, len(lines)-2)
+
+	for i := 2; i < len(lines); i++ {
+		matches := regex.FindAllString(lines[i], -1)
+		myNetworkMap[matches[0]] = map[string]string{"L": matches[1], "R": matches[2]}
+
+		if strings.HasSuffix(matches[0], "A") {
+			startingElements = append(startingElements, matches[0])
+		}
+	}
+	return startingElements, myNetworkMap
+}
+
+func getStepsForElement(element string, instructionList []string, myNetworkMap networkMap) int {
+	steps := 0
+	currentElement := element
+	for {
+		for _, instruction := range instructionList {
+			if strings.HasSuffix(currentElement, "Z") {
+				return steps
+			}
+			steps += 1
+			currentElement = myNetworkMap[currentElement][instruction]
+		}
+	}
 }
 
 // https://en.wikipedia.org/wiki/Least_common_multiple
