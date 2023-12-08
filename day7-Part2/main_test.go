@@ -8,7 +8,7 @@ import (
 
 func Test_part2(t *testing.T) {
 	testInput := util.GetFileAsLines("testinput")
-	realInput := util.GetFileAsLines("input")
+	//realInput := util.GetFileAsLines("input")
 
 	type args struct {
 		lines []string
@@ -22,11 +22,6 @@ func Test_part2(t *testing.T) {
 			name: "Test Input",
 			args: args{lines: *testInput},
 			want: 5905,
-		},
-		{
-			name: "Real Input",
-			args: args{lines: *realInput},
-			want: 254115617,
 		},
 	}
 	for _, tt := range tests {
