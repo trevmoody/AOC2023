@@ -18,22 +18,12 @@ func Test_part1(t *testing.T) {
 		{
 			name: "Test Input",
 			args: args{lines: *util.GetFileAsLines("testinput")},
-			want: 2,
-		},
-		{
-			name: "Test Input2",
-			args: args{lines: *util.GetFileAsLines("testinput2")},
 			want: 6,
-		},
-		{
-			name: "Real Input",
-			args: args{lines: *util.GetFileAsLines("input")},
-			want: 16343,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := part1(tt.args.lines); assert.Equal(t, tt.want, got) == false {
+			if got := part2(tt.args.lines); assert.Equal(t, tt.want, got) == false {
 				t.Errorf("part1() = %v, want %v", got, tt.want)
 			}
 		})
