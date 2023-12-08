@@ -31,6 +31,7 @@ var cardToValue = map[string]int{
 	"J": 1,
 }
 
+//go:generate enumer -type=HandType
 type HandType int
 
 const ( // iota is reset to 0

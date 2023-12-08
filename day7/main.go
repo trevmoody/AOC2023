@@ -109,7 +109,7 @@ func newHand(line string) hand {
 func part1(lines []string) int {
 
 	fmt.Printf("UNSorted Lines: %v\n", lines)
-	hands := []hand{}
+	var hands []hand
 	for _, line := range lines {
 		hands = append(hands, newHand(line))
 	}

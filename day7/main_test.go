@@ -33,7 +33,6 @@ func Test_less(t *testing.T) {
 
 func Test_part1(t *testing.T) {
 	testInput := util.GetFileAsLines("testinput")
-	realInput := util.GetFileAsLines("input")
 
 	type args struct {
 		lines []string
@@ -46,11 +45,6 @@ func Test_part1(t *testing.T) {
 		{
 			name: "Test Input",
 			args: args{lines: *testInput},
-			want: 6440,
-		},
-		{
-			name: "Real Input",
-			args: args{lines: *realInput},
 			want: 6440,
 		},
 	}

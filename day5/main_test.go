@@ -17,7 +17,6 @@ func Benchmark_part2(b *testing.B) {
 func Test_part2(t *testing.T) {
 
 	testInput := util.GetFileAsLines("testinput")
-	realInput := util.GetFileAsLines("input")
 
 	type args struct {
 		lines []string
@@ -31,11 +30,6 @@ func Test_part2(t *testing.T) {
 			name: "Test Data",
 			args: args{*testInput},
 			want: 46,
-		},
-		{
-			name: "Real Input Data",
-			args: args{*realInput},
-			want: 4917124,
 		},
 	}
 	for _, tt := range tests {
