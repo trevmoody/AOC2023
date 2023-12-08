@@ -33,7 +33,7 @@ func part2(lines []string) int {
 	}
 
 	//assume cyclical
-	results := []int{}
+	var results []int
 
 	for i := 0; i < len(currentElements); i++ {
 		found := false
@@ -72,6 +72,5 @@ func getLeastCommonMultiple(numbers []int) int {
 		gcd = num1
 		lcm = (lcm * numbers[i]) / gcd
 	}
-
 	return lcm
 }
