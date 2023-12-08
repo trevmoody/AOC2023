@@ -69,6 +69,7 @@ func getLeastCommonMultiple(numbers []int) int {
 }
 
 // greatest common divisor (GCD) via Euclidean algorithm
+// https://en.wikipedia.org/wiki/Euclidean_algorithm
 func GCD(a, b int) int {
 	for b != 0 {
 		t := b
