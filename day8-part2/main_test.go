@@ -29,3 +29,27 @@ func Test_part1(t *testing.T) {
 		})
 	}
 }
+
+func Test_getLeastCommonMultiple(t *testing.T) {
+	type args struct {
+		numbers []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "test1",
+			args: args{[]int{2, 5}},
+			want: 10,
+		},
+	}
+	// TODO: Add test cases.
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, getLeastCommonMultiple(tt.args.numbers), "getLeastCommonMultiple(%v)", tt.args.numbers)
+		})
+	}
+}

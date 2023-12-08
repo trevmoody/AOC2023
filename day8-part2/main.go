@@ -63,14 +63,17 @@ func getLeastCommonMultiple(numbers []int) int {
 	for i := 0; i < len(numbers); i++ {
 		num1 := lcm
 		num2 := numbers[i]
-		gcd := 1
-		for num2 != 0 {
-			temp := num2
-			num2 = num1 % num2
-			num1 = temp
-		}
-		gcd = num1
-		lcm = (lcm * numbers[i]) / gcd
+		lcm = (lcm * numbers[i]) / GCD(num1, num2)
 	}
 	return lcm
+}
+
+// greatest common divisor (GCD) via Euclidean algorithm
+func GCD(a, b int) int {
+	for b != 0 {
+		t := b
+		b = a % b
+		a = t
+	}
+	return a
 }
