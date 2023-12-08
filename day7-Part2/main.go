@@ -32,11 +32,11 @@ var cardToValue = map[string]int{
 }
 
 const ( // iota is reset to 0
-	HighCard     = iota // c0 == 0
-	OnePair      = iota // c1 == 1
-	TwoPair      = iota // c2 == 2
-	ThreeOfAKind = iota // c0 == 0
-	FullHouse    = iota // c1 == 1
+	HighCard     = iota
+	OnePair      = iota
+	TwoPair      = iota
+	ThreeOfAKind = iota
+	FullHouse    = iota
 	FourOfAKind  = iota
 	FiveOfAKind  = iota
 )
