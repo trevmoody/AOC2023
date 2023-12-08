@@ -58,12 +58,13 @@ func part2(lines []string) int {
 	return lcm
 }
 
+// https://en.wikipedia.org/wiki/Least_common_multiple
 func getLeastCommonMultiple(numbers []int) int {
 	lcm := numbers[0]
 	for i := 0; i < len(numbers); i++ {
 		num1 := lcm
 		num2 := numbers[i]
-		lcm = (lcm * numbers[i]) / GCD(num1, num2)
+		lcm = lcm * (num2 / GCD(num1, num2))
 	}
 	return lcm
 }

@@ -44,8 +44,12 @@ func Test_getLeastCommonMultiple(t *testing.T) {
 			args: args{[]int{2, 5}},
 			want: 10,
 		},
+		{
+			name: "test2",
+			args: args{[]int{2, 5, 12}},
+			want: 60,
+		},
 	}
-	// TODO: Add test cases.
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
