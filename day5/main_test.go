@@ -6,17 +6,9 @@ import (
 	"testing"
 )
 
-func Benchmark_part2(b *testing.B) {
-	realInput := util.GetFileAsLines("input")
-
-	for i := 0; i < b.N; i++ {
-		part2(*realInput)
-	}
-}
-
 func Test_part2(t *testing.T) {
 
-	testInput := util.GetFileAsLines("testinput")
+	testInput := util.GetFileAsLines("./testinput")
 
 	type args struct {
 		lines []string

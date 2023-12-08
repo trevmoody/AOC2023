@@ -9,6 +9,10 @@ import (
 )
 
 func GetFileAsLines(fileName string) *[]string {
+
+	currentDir, _ := os.Getwd()
+
+	fmt.Printf("Current DIR: %s\n", currentDir)
 	file, err := os.Open(fileName)
 	if err != nil {
 		fmt.Println("Error opening file:", err)

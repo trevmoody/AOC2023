@@ -7,7 +7,7 @@ import (
 )
 
 func Test_part1(t *testing.T) {
-	testInput := util.GetFileAsLines("testinput")
+	testInput := util.GetFileAsLines("./testinput")
 	type args struct {
 		strings []string
 	}
