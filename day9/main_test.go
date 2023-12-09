@@ -18,7 +18,7 @@ func Test_part1(t *testing.T) {
 		{
 			name: "Test Input",
 			args: args{lines: *util.GetFileAsLines("testinput")},
-			want: 0,
+			want: 114,
 		},
 	}
 	for _, tt := range tests {
