@@ -39,7 +39,7 @@ func part2(lines []string) int {
 	for _, line := range lines {
 		//fmt.Printf(".............................................\n")
 		valuesList := util.StringsToInts(line)
-		newVal, _ := processLine2(valuesList)
+		newVal := processLine2(valuesList)
 		childSum += newVal
 	}
 
@@ -69,24 +69,23 @@ func processLine1(valuesList []int) (diff int, sum int) {
 	return childDiff, newSum
 }
 
-func processLine2(valuesList []int) (diff int, sum int) {
+func processLine2(valuesList []int) (newVal int) {
 
 	if !slices.ContainsFunc(valuesList, func(i int) bool {
 		return i != 0
 	}) {
 		//fmt.Printf("Returning newVal: %d, sum: %d for list %v\n", 0, 0, valuesList)
-		return 0, 0
+		return 0
 	}
 
 	diffList := getDiffList(valuesList)
 
-	childNewVal, sum := processLine2(diffList)
+	childNewVal := processLine2(diffList)
 
-	newVal := valuesList[0] - childNewVal
-	newSum := sum + newVal
+	newVal = valuesList[0] - childNewVal
 
 	//fmt.Printf("Returning newVal: %d, sum: %d for list %v\n", newVal, newSum, valuesList)
-	return newVal, newSum
+	return newVal
 }
 
 func getDiffList(valuesList []int) []int {
