@@ -60,7 +60,6 @@ func processLine1(valuesList []int) (diff int, sum int) {
 	diffList := getDiffList(valuesList)
 
 	childDiff, sum := processLine1(diffList)
-	// so my new Val, is last val + diff
 
 	newVal := childDiff + valuesList[len(valuesList)-1]
 	newSum := sum + newVal
