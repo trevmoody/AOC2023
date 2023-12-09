@@ -14,18 +14,17 @@ func main() {
 	part2(*util.GetFileAsLines("input"))
 
 }
+
 func part1(lines []string) int {
 	fmt.Printf("got %d lines\n", len(lines))
 
 	childSum := 0
-
 	for _, line := range lines {
 		//fmt.Printf(".............................................\n")
 		valuesList := util.StringsToInts(line)
-		_, sum := processLine1(valuesList)
-		childSum += sum
+		newLine := processLine(valuesList)
+		childSum += newLine
 	}
-
 	fmt.Printf("TOTAL: %d\n", childSum)
 	return childSum
 
@@ -35,53 +34,33 @@ func part2(lines []string) int {
 	fmt.Printf("got %d lines\n", len(lines))
 
 	childSum := 0
-
 	for _, line := range lines {
 		//fmt.Printf(".............................................\n")
-		valuesList := util.StringsToInts(line)
-		newVal := processLine2(valuesList)
-		childSum += newVal
+		valuesList := util.ReverseInts(util.StringsToInts(line))
+		newLine := processLine(valuesList)
+		childSum += newLine
 	}
-
 	fmt.Printf("TOTAL: %d\n", childSum)
 	return childSum
 
 }
 
-func processLine1(valuesList []int) (diff int, sum int) {
+func processLine(valuesList []int) (newVal int) {
 	if !slices.ContainsFunc(valuesList, func(i int) bool {
 		return i != 0
 	}) {
 		//fmt.Printf("Returning newVal: %d, sum: %d for list %v\n", 0, 0, valuesList)
-		return 0, 0
-	}
-
-	diffList := getDiffList(valuesList)
-
-	childDiff, sum := processLine1(diffList)
-
-	newVal := childDiff + valuesList[len(valuesList)-1]
-	newSum := sum + newVal
-
-	//fmt.Printf("Returning newVal: %d, sum: %d for list %v\n", newVal, newSum, valuesList)
-	return childDiff, newSum
-}
-
-func processLine2(valuesList []int) (newVal int) {
-	if !slices.ContainsFunc(valuesList, func(i int) bool {
-		return i != 0
-	}) {
-		//fmt.Printf("Returning newVal: %d, sum: %d for list %v\n", 0, 0, valuesList)
+		//if everything zero, so new val zero, and no need to process diffs.
 		return 0
 	}
 
 	diffList := getDiffList(valuesList)
 
-	childNewVal := processLine2(diffList)
+	childNewVal := processLine(diffList)
 
-	newVal = valuesList[0] - childNewVal
+	newVal = valuesList[len(valuesList)-1] + childNewVal
 
-	//fmt.Printf("Returning newVal: %d, sum: %d for list %v\n", newVal, newSum, valuesList)
+	//fmt.Printf("Returning newVal: %d, for list %v\n", newVal, valuesList)
 	return newVal
 }
 
