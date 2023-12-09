@@ -49,7 +49,6 @@ func part2(lines []string) int {
 }
 
 func processLine1(valuesList []int) (diff int, sum int) {
-
 	if !slices.ContainsFunc(valuesList, func(i int) bool {
 		return i != 0
 	}) {
@@ -69,7 +68,6 @@ func processLine1(valuesList []int) (diff int, sum int) {
 }
 
 func processLine2(valuesList []int) (newVal int) {
-
 	if !slices.ContainsFunc(valuesList, func(i int) bool {
 		return i != 0
 	}) {
