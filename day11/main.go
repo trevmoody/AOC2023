@@ -50,7 +50,7 @@ func part1(lines []string) int {
 			fmt.Printf("Empty Col at Id %d\n", colId)
 			// ok so any col > colId we increase
 			for i, point := range planetsList {
-				if point.col-emptyColCount > colId {
+				if point.col-emptyColCount > colId { // original col position
 					planetsList[i] = Point{point.row, point.col + (1000000 - 1)}
 				}
 			}
