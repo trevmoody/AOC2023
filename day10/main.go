@@ -3,73 +3,142 @@ package main
 import (
 	"fmt"
 	"github.com/trevmoody/aoc2023/util"
-	"slices"
+	"strings"
 )
 
 func main() {
+
 	fmt.Printf("Running Part 1\n")
 	part1(*util.GetFileAsLines("input"))
 
-	fmt.Printf("Running Part 2\n")
-	part2(*util.GetFileAsLines("input"))
+	//fmt.Printf("Running Part 2\n")
+	//part2(*util.GetFileAsLines("input"))
 
 }
 
 func part1(lines []string) int {
 	fmt.Printf("got %d lines\n", len(lines))
 
-	childSum := 0
-	for _, line := range lines {
-		//fmt.Printf(".............................................\n")
-		valuesList := util.StringsToInts(line)
-		newLine := processLine(valuesList)
-		childSum += newLine
+	var grid [][]string
+
+	var startHorizontal int
+	var startVertical int
+
+	for i, line := range lines {
+
+		parsedLine := strings.Split(line, "")
+		grid = append(grid, parsedLine)
+
+		index := strings.Index(line, "S")
+		if index != -1 {
+			startVertical = i
+			startHorizontal = index
+		}
 	}
-	fmt.Printf("TOTAL: %d\n", childSum)
-	return childSum
+
+	// ok so we start from each of the 4 adjacent, then follow
+	// but we know for now its up so....
+
+	//fmt.Printf("StartX %d, Start Y %d, Grid: %v\n", startHorizontal, startVertical, grid)
+
+	steps := moveAndIncrement(grid, 1, startHorizontal, startVertical+1, "S")
+
+	//fmt.Printf("startHorizontal %d, startVertical %d, Grid: %v\n", startHorizontal, startVertical, grid, steps)
+
+	fmt.Printf("MAX Dist := %d\n", steps/2)
+	return (steps - 1) / 2
 
 }
 
-func part2(lines []string) int {
-	fmt.Printf("got %d lines\n", len(lines))
-
-	childSum := 0
-	for _, line := range lines {
-		//fmt.Printf(".............................................\n")
-		valuesList := util.ReverseInts(util.StringsToInts(line))
-		newLine := processLine(valuesList)
-		childSum += newLine
+func nextCoords(currentHorizontal int, currentVertical int, directionToTravel string) (int, int) {
+	switch directionToTravel {
+	case "N":
+		return currentHorizontal, currentVertical - 1
+	case "S":
+		return currentHorizontal, currentVertical + 1
+	case "E":
+		return currentHorizontal + 1, currentVertical
+	case "W":
+		return currentHorizontal - 1, currentVertical
 	}
-	fmt.Printf("TOTAL: %d\n", childSum)
-	return childSum
-
+	panic("cant get cords")
+	return 0, 0
 }
 
-func processLine(valuesList []int) (newVal int) {
-	if !slices.ContainsFunc(valuesList, func(i int) bool {
-		return i != 0
-	}) {
-		//fmt.Printf("Returning newVal: %d, sum: %d for list %v\n", 0, 0, valuesList)
-		//if everything zero, so new val zero, and no need to process diffs.
-		return 0
+func moveAndIncrement(grid [][]string, currentCount int, horizontal int, vertical int, directionTraveled string) int {
+
+	// 0,0 top left
+	// first dimension is vertical, 2nd horizontal
+
+	currentCount++
+	currentPipe := grid[vertical][horizontal]
+	fmt.Printf("steps = %d, horizontal:%d, vertical: %d, pipe %s\n", currentCount, horizontal, vertical, currentPipe)
+
+	var nextHorizontal int
+	var nextVertical int
+	var nextDirection string
+	switch {
+	case currentPipe == "|" && directionTraveled == "N":
+		{
+			nextDirection = "N"
+		}
+	case currentPipe == "|" && directionTraveled == "S":
+		{
+			nextDirection = "S"
+		}
+	case currentPipe == "-" && directionTraveled == "E":
+		{
+			nextDirection = "E"
+		}
+	case currentPipe == "-" && directionTraveled == "W":
+		{
+			nextDirection = "W"
+		}
+	case currentPipe == "L" && directionTraveled == "S":
+		{
+			nextDirection = "E"
+		}
+	case currentPipe == "L" && directionTraveled == "W":
+		{
+			nextDirection = "N"
+		}
+	case currentPipe == "J" && directionTraveled == "S":
+		{
+			nextDirection = "W"
+		}
+	case currentPipe == "J" && directionTraveled == "E":
+		{
+			nextDirection = "N"
+		}
+
+	case currentPipe == "7" && directionTraveled == "N":
+		{
+			nextDirection = "W"
+		}
+	case currentPipe == "7" && directionTraveled == "E":
+		{
+			nextDirection = "S"
+		}
+
+	case currentPipe == "F" && directionTraveled == "N":
+		{
+			nextDirection = "E"
+		}
+	case currentPipe == "F" && directionTraveled == "W":
+		{
+			nextDirection = "S"
+		}
+
+	case currentPipe == "S":
+		{
+			return currentCount
+		}
+
+	default:
+		panic("aaargh somehting wrong")
 	}
 
-	diffList := getDiffList(valuesList)
+	nextHorizontal, nextVertical = nextCoords(horizontal, vertical, nextDirection)
+	return moveAndIncrement(grid, currentCount, nextHorizontal, nextVertical, nextDirection)
 
-	childNewVal := processLine(diffList)
-
-	newVal = valuesList[len(valuesList)-1] + childNewVal
-
-	//fmt.Printf("Returning newVal: %d, for list %v\n", newVal, valuesList)
-	return newVal
-}
-
-func getDiffList(valuesList []int) []int {
-	diffList := make([]int, len(valuesList)-1)
-	//skip 0
-	for i := 1; i < len(valuesList); i++ {
-		diff := valuesList[i] - valuesList[i-1]
-		diffList[i-1] = diff
-	}
-	return diffList
 }
