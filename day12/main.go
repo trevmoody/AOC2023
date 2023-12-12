@@ -19,7 +19,6 @@ func part2(lines []string) int {
 	for _, line := range lines {
 		sum += getPossibleMatchesCount(line)
 	}
-
 	fmt.Printf("TOTAL %d\n", sum)
 	return sum
 }
@@ -43,7 +42,7 @@ func getPossibleMatchesCount(line string) int {
 
 	conditionRecord = strings.TrimSuffix(conditionRecord, "?")
 
-	matches := count(conditionRecord, check)
+	matches := count(conditionRecord, check, make(map[state]int))
 
 	fmt.Printf("Condition: %s check %v matches: %d \n", conditionRecord, check, matches)
 	return matches
@@ -55,15 +54,12 @@ type state struct {
 	numbers string
 }
 
-var cache = make(map[state]int)
-
-func store(pattern string, numbers []int, value int) int {
-	cache[state{pattern, fmt.Sprint(numbers)}] = value
+func store(stateStore map[state]int, pattern string, numbers []int, value int) int {
+	stateStore[state{pattern, fmt.Sprint(numbers)}] = value
 	return value
 }
 
-func count(conditionRecord string, restOfcheckList []int) int {
-
+func count(conditionRecord string, restOfcheckList []int, stateStore map[state]int) int {
 	//	fmt.Printf("proceesing substring %s, checkSize %d rest of list %v \n", conditionRecord, restOfcheckList)
 	if len(conditionRecord) == 0 && len(restOfcheckList) == 0 {
 		return 1
@@ -73,19 +69,17 @@ func count(conditionRecord string, restOfcheckList []int) int {
 		return 0
 	}
 
-	//cache here.
-	// test cache
-	if value, ok := cache[state{conditionRecord, fmt.Sprint(restOfcheckList)}]; ok {
+	if value, ok := stateStore[state{conditionRecord, fmt.Sprint(restOfcheckList)}]; ok {
 		return value
 	}
 
 	currentConditionRecord := conditionRecord[0]
 	switch currentConditionRecord {
 	case '.':
-		return count(conditionRecord[1:], restOfcheckList)
+		return count(conditionRecord[1:], restOfcheckList, stateStore)
 	case '?':
-		assumeDot := count(conditionRecord[1:], restOfcheckList) //  same as a dot.
-		assumeHash := count("#"+conditionRecord[1:], restOfcheckList)
+		assumeDot := count(conditionRecord[1:], restOfcheckList, stateStore) //  same as a dot.
+		assumeHash := count("#"+conditionRecord[1:], restOfcheckList, stateStore)
 		return assumeDot + assumeHash // same as a hash
 	case '#':
 
@@ -94,31 +88,30 @@ func count(conditionRecord string, restOfcheckList []int) int {
 		}
 
 		currentCheck := restOfcheckList[0]
-		//ok how many non dots..
+		//ok how many non dots.., treating ? as #
 		indexDot := strings.Index(conditionRecord, ".")
 		if indexDot == -1 {
+			//not found asssume end of line
 			indexDot = len(conditionRecord)
 		}
 		if indexDot < currentCheck {
-			// not enough
+			// not enough # to fill the group
 			return 0
 		}
-
-		// so we have found something.
 
 		remainingConditionRecord := conditionRecord[currentCheck:]
 		if len(remainingConditionRecord) == 0 {
-			res := count(remainingConditionRecord, restOfcheckList[1:])
-			store(remainingConditionRecord, restOfcheckList[1:], res)
+			res := count(remainingConditionRecord, restOfcheckList[1:], stateStore)
+			store(stateStore, remainingConditionRecord, restOfcheckList[1:], res)
 			return res
 		}
 		if remainingConditionRecord[0] == '#' {
-			// fail
+			// fail this means that out group too big now....
 			return 0
 		} else {
 			// remove the first as is a dot, or a ? that we treat as a dot.
-			res := count(remainingConditionRecord[1:], restOfcheckList[1:])
-			store(remainingConditionRecord[1:], restOfcheckList[1:], res)
+			res := count(remainingConditionRecord[1:], restOfcheckList[1:], stateStore)
+			store(stateStore, remainingConditionRecord[1:], restOfcheckList[1:], res)
 			return res
 		}
 
