@@ -29,7 +29,7 @@ func Test_count(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := count(tt.args.conditionRecord, tt.args.check); got != tt.want {
+			if got := count(tt.args.conditionRecord, tt.args.check, make(map[state]int)); got != tt.want {
 				t.Errorf("getPossibleConditionRecordsCount() = %v, want %v", got, tt.want)
 			}
 		})
