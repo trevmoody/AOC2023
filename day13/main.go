@@ -34,7 +34,7 @@ func findVertical(pattern []string, expectedDiffCount int) int {
 	// pivot the pattern
 	var pivot []string
 
-	for index, _ := range pattern[0] {
+	for index := range pattern[0] {
 		pivotRow := ""
 		for _, inputRow := range pattern {
 			pivotRow += string(inputRow[index])
@@ -55,7 +55,7 @@ func find(pattern []string, desc string, expectedDiffCount int) int {
 
 	for rowId := 0; rowId < rowCount; rowId++ {
 		if checkRowDiffCount(rowId, pattern, expectedDiffCount) {
-			//fmt.Printf("Found %s Mirror: %d\n", desc, rowId+1)
+			fmt.Printf("Found %s Mirror: %d\n", desc, rowId+1)
 			return rowId + 1
 		}
 	}

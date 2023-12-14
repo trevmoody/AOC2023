@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -53,13 +54,7 @@ func StringsToInts(line string) []int {
 }
 
 func ReverseInts(s []int) []int {
-	a := make([]int, len(s))
-	copy(a, s)
+	slices.Reverse(s)
+	return s
 
-	for i := len(a)/2 - 1; i >= 0; i-- {
-		opp := len(a) - 1 - i
-		a[i], a[opp] = a[opp], a[i]
-	}
-
-	return a
 }
