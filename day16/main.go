@@ -80,9 +80,6 @@ func populateEnergisedPointMap(rowId int, colId int, lines []string, direction s
 	previouslyVisited[PointDirection{rowId, colId, direction}] = true
 
 	var nextDirections []string
-	var nextRowId int
-	var nextColId int
-
 	switch currentChar {
 	case '.':
 		{
@@ -160,6 +157,9 @@ func populateEnergisedPointMap(rowId int, colId int, lines []string, direction s
 	}
 
 	for _, nextDirection := range nextDirections {
+		var nextRowId int
+		var nextColId int
+
 		switch nextDirection {
 		case "N":
 			nextRowId = rowId - 1
