@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/trevmoody/aoc2023/util"
+	"math"
 )
 
 func main() {
@@ -27,53 +28,29 @@ func part2(lines []string) {
 	// row 0
 	for colId := 0; colId < len(lines[0]); colId++ {
 		energisedPoints := map[Point]bool{}
-		previouslyVisited := map[PointDirection]bool{}
-
-		populateEnergisedPointMap(0, colId, lines, "S", energisedPoints, previouslyVisited)
-
-		countForRun := len(energisedPoints)
-		if countForRun > currentMax {
-			currentMax = countForRun
-		}
+		populateEnergisedPointMap(0, colId, lines, "S", energisedPoints, map[PointDirection]bool{})
+		currentMax = int(math.Max(float64(currentMax), float64(len(energisedPoints))))
 	}
 
 	// row last
 	for colId := 0; colId < len(lines[0]); colId++ {
 		energisedPoints := map[Point]bool{}
-		previouslyVisited := map[PointDirection]bool{}
-
-		populateEnergisedPointMap(len(lines)-1, colId, lines, "N", energisedPoints, previouslyVisited)
-
-		countForRun := len(energisedPoints)
-		if countForRun > currentMax {
-			currentMax = countForRun
-		}
+		populateEnergisedPointMap(len(lines)-1, colId, lines, "N", energisedPoints, map[PointDirection]bool{})
+		currentMax = int(math.Max(float64(currentMax), float64(len(energisedPoints))))
 	}
 
 	// col 0
 	for rowId := 0; rowId < len(lines); rowId++ {
 		energisedPoints := map[Point]bool{}
-		previouslyVisited := map[PointDirection]bool{}
-
-		populateEnergisedPointMap(rowId, 0, lines, "E", energisedPoints, previouslyVisited)
-
-		countForRun := len(energisedPoints)
-		if countForRun > currentMax {
-			currentMax = countForRun
-		}
+		populateEnergisedPointMap(rowId, 0, lines, "E", energisedPoints, map[PointDirection]bool{})
+		currentMax = int(math.Max(float64(currentMax), float64(len(energisedPoints))))
 	}
 
 	// col last
 	for rowId := 0; rowId < len(lines); rowId++ {
 		energisedPoints := map[Point]bool{}
-		previouslyVisited := map[PointDirection]bool{}
-
-		populateEnergisedPointMap(rowId, len(lines[0]), lines, "W", energisedPoints, previouslyVisited)
-
-		countForRun := len(energisedPoints)
-		if countForRun > currentMax {
-			currentMax = countForRun
-		}
+		populateEnergisedPointMap(rowId, len(lines[0]), lines, "W", energisedPoints, map[PointDirection]bool{})
+		currentMax = int(math.Max(float64(currentMax), float64(len(energisedPoints))))
 	}
 
 	fmt.Printf("Part 2 Max Energised Tiles Count: %d\n", currentMax)
