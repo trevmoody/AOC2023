@@ -7,8 +7,9 @@ import (
 
 func main() {
 
-	part1(*util.GetFileAsLines("input"))
-	part2(*util.GetFileAsLines("input"))
+	lines := *util.GetFileAsLines("input")
+	part1(lines)
+	part2(lines)
 }
 
 type Point struct {
@@ -21,8 +22,6 @@ type PointDirection struct {
 }
 
 func part2(lines []string) {
-	// start top left
-
 	currentMax := 0
 
 	// row 0
@@ -77,18 +76,16 @@ func part2(lines []string) {
 		}
 	}
 
-	fmt.Printf("Part 2 Max EnergisedTiles Count: %d\n", currentMax)
+	fmt.Printf("Part 2 Max Energised Tiles Count: %d\n", currentMax)
 }
 
 func part1(lines []string) {
-	// start top left
-
 	energisedPoints := map[Point]bool{}
 	previouslyVisited := map[PointDirection]bool{}
 
 	populateEnergisedPointMap(0, 0, lines, "E", energisedPoints, previouslyVisited)
 
-	fmt.Printf("EnergisedTiles Count: %d\n", len(energisedPoints))
+	fmt.Printf("Part 1 Energised Tiles Count: %d\n", len(energisedPoints))
 }
 
 func populateEnergisedPointMap(rowId int, colId int, lines []string, direction string, energisedPoints map[Point]bool, previouslyVisited map[PointDirection]bool) {
@@ -105,13 +102,7 @@ func populateEnergisedPointMap(rowId int, colId int, lines []string, direction s
 	energisedPoints[Point{rowId, colId}] = true
 	previouslyVisited[PointDirection{rowId, colId, direction}] = true
 
-	populateEnergisedPointMapForChar(currentChar, rowId, colId, lines, direction, energisedPoints, previouslyVisited)
-
-}
-
-func populateEnergisedPointMapForChar(currentChar uint8, rowId int, colId int, lines []string, direction string, energisedPoints map[Point]bool, previouslyVisited map[PointDirection]bool) {
-
-	var nextDirection string
+	var nextDirections []string
 	var nextRowId int
 	var nextColId int
 
@@ -120,31 +111,27 @@ func populateEnergisedPointMapForChar(currentChar uint8, rowId int, colId int, l
 		{
 			switch direction {
 			case "N":
-				nextDirection = "N"
-
+				nextDirections = append(nextDirections, "N")
 			case "E":
-				nextDirection = "E"
-
+				nextDirections = append(nextDirections, "E")
 			case "S":
-				nextDirection = "S"
-
+				nextDirections = append(nextDirections, "S")
 			case "W":
-				nextDirection = "W"
+				nextDirections = append(nextDirections, "W")
 			}
-
 		}
 
 	case '/':
 		{
 			switch direction {
 			case "N":
-				nextDirection = "E"
+				nextDirections = append(nextDirections, "E")
 			case "E":
-				nextDirection = "N"
+				nextDirections = append(nextDirections, "N")
 			case "S":
-				nextDirection = "W"
+				nextDirections = append(nextDirections, "W")
 			case "W":
-				nextDirection = "S"
+				nextDirections = append(nextDirections, "S")
 			}
 		}
 
@@ -153,13 +140,13 @@ func populateEnergisedPointMapForChar(currentChar uint8, rowId int, colId int, l
 
 			switch direction {
 			case "N":
-				nextDirection = "W"
+				nextDirections = append(nextDirections, "W")
 			case "E":
-				nextDirection = "S"
+				nextDirections = append(nextDirections, "S")
 			case "S":
-				nextDirection = "E"
+				nextDirections = append(nextDirections, "E")
 			case "W":
-				nextDirection = "N"
+				nextDirections = append(nextDirections, "N")
 			}
 		}
 
@@ -167,53 +154,49 @@ func populateEnergisedPointMapForChar(currentChar uint8, rowId int, colId int, l
 		{
 			switch direction {
 			case "N": // split
-				populateEnergisedPointMapForChar('.', rowId, colId, lines, "E", energisedPoints, previouslyVisited)
-				populateEnergisedPointMapForChar('.', rowId, colId, lines, "W", energisedPoints, previouslyVisited)
-				return
+				nextDirections = append(nextDirections, "W")
+				nextDirections = append(nextDirections, "E")
 			case "E":
-				nextDirection = "E"
+				nextDirections = append(nextDirections, "E")
 			case "S":
-				populateEnergisedPointMapForChar('.', rowId, colId, lines, "E", energisedPoints, previouslyVisited)
-				populateEnergisedPointMapForChar('.', rowId, colId, lines, "W", energisedPoints, previouslyVisited)
-				return
+				nextDirections = append(nextDirections, "W")
+				nextDirections = append(nextDirections, "E")
 			case "W":
-				nextDirection = "W"
+				nextDirections = append(nextDirections, "W")
 			}
 		}
 	case '|':
 		{
 			switch direction {
 			case "N":
-				nextDirection = "N"
+				nextDirections = append(nextDirections, "N")
 			case "E":
-				populateEnergisedPointMapForChar('.', rowId, colId, lines, "N", energisedPoints, previouslyVisited)
-				populateEnergisedPointMapForChar('.', rowId, colId, lines, "S", energisedPoints, previouslyVisited)
-				return
+				nextDirections = append(nextDirections, "N")
+				nextDirections = append(nextDirections, "S")
 			case "S":
-				nextDirection = "S"
+				nextDirections = append(nextDirections, "S")
 			case "W":
-				populateEnergisedPointMapForChar('.', rowId, colId, lines, "N", energisedPoints, previouslyVisited)
-				populateEnergisedPointMapForChar('.', rowId, colId, lines, "S", energisedPoints, previouslyVisited)
-				return
+				nextDirections = append(nextDirections, "N")
+				nextDirections = append(nextDirections, "S")
 			}
 		}
 	}
 
-	switch nextDirection {
-	case "N":
-		nextRowId = rowId - 1
-		nextColId = colId
-	case "E":
-		nextRowId = rowId
-		nextColId = colId + 1
-	case "S":
-		nextRowId = rowId + 1
-		nextColId = colId
-	case "W":
-		nextRowId = rowId
-		nextColId = colId - 1
+	for _, nextDirection := range nextDirections {
+		switch nextDirection {
+		case "N":
+			nextRowId = rowId - 1
+			nextColId = colId
+		case "E":
+			nextRowId = rowId
+			nextColId = colId + 1
+		case "S":
+			nextRowId = rowId + 1
+			nextColId = colId
+		case "W":
+			nextRowId = rowId
+			nextColId = colId - 1
+		}
+		populateEnergisedPointMap(nextRowId, nextColId, lines, nextDirection, energisedPoints, previouslyVisited)
 	}
-
-	populateEnergisedPointMap(nextRowId, nextColId, lines, nextDirection, energisedPoints, previouslyVisited)
-
 }
