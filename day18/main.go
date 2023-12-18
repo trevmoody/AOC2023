@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/trevmoody/aoc2023/util"
 	"math"
-	"slices"
 	"strconv"
 	"strings"
 )
@@ -14,7 +13,6 @@ type Point struct {
 }
 
 func main() {
-
 	lines := *util.GetFileAsLines("input")
 	part1(lines)
 	part2(lines)
@@ -35,13 +33,8 @@ func part1(lines []string) {
 		nextPoint = move(nextPoint, direction, amount)
 		points = append(points, nextPoint)
 	}
-
-	slices.Reverse(points)
-
 	area := calc(points, length)
-
 	fmt.Printf("Part 1 Area %d\n", area)
-
 }
 
 func part2(lines []string) {
@@ -69,15 +62,14 @@ func part2(lines []string) {
 		points = append(points, nextPoint)
 	}
 
-	slices.Reverse(points)
-
 	area := calc(points, length)
-
 	fmt.Printf("Part 2 Area %d\n", area)
-
 }
 
 func calc(points []Point, length int) int {
+	// half the length for straights
+	// 3/4 * 4 for the outer corners = 3
+	// 3/4 + 1/4 for the other matching corners, so same as half the length, 2 becomes 1.
 	return int(volume(points)) + (length-4)/2 + 3
 }
 
@@ -104,6 +96,8 @@ func move(from Point, direction string, amount int) Point {
 	}
 }
 
+// Shoelace Formula
+// https://en.wikipedia.org/wiki/Shoelace_formula
 func volume(points []Point) float64 {
 	sum1 := points[len(points)-1].x * points[0].y
 	sum2 := points[len(points)-1].y * points[0].x
@@ -114,5 +108,4 @@ func volume(points []Point) float64 {
 	}
 
 	return math.Abs(float64(sum1-sum2)) / 2
-
 }
