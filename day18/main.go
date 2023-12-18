@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"github.com/trevmoody/aoc2023/util"
 	"math"
+	"regexp"
 	"strconv"
-	"strings"
 )
 
 type Point struct {
 	x, y int
 }
+
+var re = regexp.MustCompile(`(.) (.*) \(#(\w{5})(\w)\)`)
 
 func main() {
 	lines := *util.GetFileAsLines("input")
@@ -24,9 +26,9 @@ func part1(lines []string) {
 
 	length := 0
 	for _, line := range lines {
-		split := strings.Fields(line)
-		direction := split[0]
-		amount, _ := strconv.Atoi(split[1])
+		matches := re.FindStringSubmatch(line)
+		direction := matches[1]
+		amount, _ := strconv.Atoi(matches[2])
 
 		length += amount
 
@@ -49,16 +51,14 @@ func part2(lines []string) {
 	nextPoint := Point{0, 0}
 
 	length := 0
-	for _, line := range lines {
-		//split := strings.Fields(line)
-		index := strings.Index(line, "#")
-		hexString := line[index+1 : index+6]
-		directionString := string(line[len(line)-2])
-		amount, _ := strconv.ParseInt(hexString, 16, 64)
 
+	for _, line := range lines {
+		matches := re.FindStringSubmatch(line)
+		//split := strings.Fields(line)
+		amount, _ := strconv.ParseInt(matches[3], 16, 64)
 		length += int(amount)
 
-		nextPoint = move(nextPoint, directionLookup[directionString], int(amount))
+		nextPoint = move(nextPoint, directionLookup[matches[4]], int(amount))
 		points = append(points, nextPoint)
 	}
 
