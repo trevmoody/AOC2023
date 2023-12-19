@@ -288,7 +288,7 @@ func buildRule(rawRule string, xmasField string, operand string, amountStr strin
 	amount, _ := strconv.Atoi(amountStr)
 
 	f := func(xmas machinePart) string {
-		xmasFieldVal := -1
+		var xmasFieldVal int
 		switch xmasField {
 		case "x":
 			xmasFieldVal = xmas.x
@@ -298,6 +298,8 @@ func buildRule(rawRule string, xmasField string, operand string, amountStr strin
 			xmasFieldVal = xmas.a
 		case "s":
 			xmasFieldVal = xmas.s
+		default:
+			panic("Unknown rating")
 		}
 
 		switch operand {
@@ -310,7 +312,7 @@ func buildRule(rawRule string, xmasField string, operand string, amountStr strin
 				return destination
 			}
 		default:
-
+			panic("aaargh")
 			return ""
 		}
 
