@@ -7,6 +7,35 @@ import (
 	"strings"
 )
 
+type ModuleType int
+
+const ( // iota is reset to 0
+	broadcast ModuleType = iota
+	flipFlop
+	conjunction
+)
+
+type PulseType int
+
+type PulseData struct {
+	destinationName string
+	pulseType       PulseType
+	sourceName      string
+}
+
+const (
+	low PulseType = iota
+	high
+)
+
+type Module struct {
+	name                     string
+	moduleType               ModuleType
+	destinationModuleNames   []string
+	flipFlopState            bool                 //true on, false off
+	conjunctionModuleHistory map[string]PulseType // modulename - pulse type
+}
+
 func main() {
 	lines := *util.GetFileAsLines("input")
 	part1(lines)
@@ -24,7 +53,7 @@ func part2(lines []string, destinationToTrack string) {
 		}
 	}
 
-	// assume only conjunctins send to parent conjunction
+	// assume only conjunctions send to parent conjunction
 	destinationsToTrack := map[string]int{}
 	for _, module := range moduleMap {
 		if slices.Contains(module.destinationModuleNames, parentConjunction.name) {
@@ -73,35 +102,6 @@ func part2(lines []string, destinationToTrack string) {
 
 }
 
-type ModuleType int
-
-const ( // iota is reset to 0
-	broadcast ModuleType = iota
-	flipflop
-	conjunction
-)
-
-type PulseType int
-
-type PulseData struct {
-	destinationName string
-	pulseType       PulseType
-	sourceName      string
-}
-
-const (
-	low PulseType = iota
-	high
-)
-
-type Module struct {
-	name                     string
-	moduleType               ModuleType
-	destinationModuleNames   []string
-	flipFlopState            bool                 //true on, false off
-	conjunctionModuleHistory map[string]PulseType // modulename - pulse type
-}
-
 func (m Module) handlePulse(pulseData PulseData) ([]PulseData, Module) {
 	//fmt.Printf("handling pulse %s -%d-> %s \n", pulseData.sourceName, pulseData.pulseType, pulseData.destinationName)
 
@@ -118,7 +118,7 @@ func (m Module) handlePulse(pulseData PulseData) ([]PulseData, Module) {
 			)
 		}
 
-	case flipflop:
+	case flipFlop:
 		if pulseData.pulseType == low {
 			// ok flip
 			if m.flipFlopState == false {
@@ -227,7 +227,7 @@ func parseInput(lines []string) map[string]Module {
 		if splitLine[0] == "broadcaster" {
 			parsedModule = Module{name: "broadcaster", moduleType: broadcast, destinationModuleNames: destinationModulesNames}
 		} else if strings.HasPrefix(splitLine[0], "%") {
-			parsedModule = Module{name: splitLine[0][1:], moduleType: flipflop, destinationModuleNames: destinationModulesNames, flipFlopState: false}
+			parsedModule = Module{name: splitLine[0][1:], moduleType: flipFlop, destinationModuleNames: destinationModulesNames, flipFlopState: false}
 		} else if strings.HasPrefix(splitLine[0], "&") {
 			parsedModule = Module{name: splitLine[0][1:], moduleType: conjunction, destinationModuleNames: destinationModulesNames, conjunctionModuleHistory: map[string]PulseType{}}
 		}
