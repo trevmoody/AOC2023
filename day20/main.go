@@ -3,23 +3,33 @@ package main
 import (
 	"fmt"
 	"github.com/trevmoody/aoc2023/util"
+	"slices"
 	"strings"
 )
 
 func main() {
 	lines := *util.GetFileAsLines("input")
 	part1(lines)
-	part2(lines)
+	part2(lines, "rx")
 }
 
-func part2(lines []string) {
+func part2(lines []string, destinationToTrack string) {
 	moduleMap := parseInput(lines)
 
-	// zh needs all its inputs to be high
-	// check freq on zh inputs sx. jt kb ks
+	// assume only one conjunction sends to wanted destination
+	var parentConjunction Module
+	for _, module := range moduleMap {
+		if slices.Contains(module.destinationModuleNames, destinationToTrack) {
+			parentConjunction = module
+		}
+	}
 
-	destinationsToTrack := map[string]int{
-		"sx": 0, "jt": 0, "kb": 0, "ks": 0,
+	// assume only conjunctins send to parent conjunction
+	destinationsToTrack := map[string]int{}
+	for _, module := range moduleMap {
+		if slices.Contains(module.destinationModuleNames, parentConjunction.name) {
+			destinationsToTrack[module.name] = 0
+		}
 	}
 
 	count := 0
@@ -47,15 +57,15 @@ func part2(lines []string) {
 		completeCount := 0
 		iterationCounts := []int{}
 		for _, destCount := range destinationsToTrack {
+			// expectation here is that its cyclical
 			if destCount != 0 {
 				completeCount += 1
 				iterationCounts = append(iterationCounts, destCount)
 			}
 		}
 
-		if completeCount == 4 {
+		if completeCount == len(destinationsToTrack) {
 			lcm := util.GetLeastCommonMultiple(iterationCounts)
-
 			fmt.Printf("PART 2 %d\n", lcm)
 			return
 		}
