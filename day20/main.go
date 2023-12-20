@@ -17,23 +17,23 @@ const ( // iota is reset to 0
 
 type PulseType int
 
+const (
+	low PulseType = iota
+	high
+)
+
 type PulseData struct {
 	destinationName string
 	pulseType       PulseType
 	sourceName      string
 }
 
-const (
-	low PulseType = iota
-	high
-)
-
 type Module struct {
 	name                     string
 	moduleType               ModuleType
 	destinationModuleNames   []string
-	flipFlopState            bool                 //true on, false off
-	conjunctionModuleHistory map[string]PulseType // modulename - pulse type
+	flipFlopState            bool
+	conjunctionModuleHistory map[string]PulseType
 }
 
 func main() {
@@ -61,30 +61,26 @@ func part2(lines []string, destinationToTrack string) {
 		}
 	}
 
-	count := 0
-	for {
+	for count := 1; ; count++ {
 		var pulseDestinationsToProcess []PulseData
 		pulseDestinationsToProcess = append(pulseDestinationsToProcess, PulseData{"broadcaster", low, "button"})
-
-		count += 1
 
 		for i := 0; i < len(pulseDestinationsToProcess); i++ {
 			pd := pulseDestinationsToProcess[i]
 
-			if pd.destinationName == "zh" && pd.pulseType == high {
+			if pd.destinationName == parentConjunction.name && pd.pulseType == high {
 				destinationsToTrack[pd.sourceName] = count
 			}
 
 			destinationModule := moduleMap[pd.destinationName]
 			nextPulses, updatedModule := destinationModule.handlePulse(pd)
 			pulseDestinationsToProcess = append(pulseDestinationsToProcess, nextPulses...)
-
 			moduleMap[pd.destinationName] = updatedModule
-
 		}
 
+		// check if we have a count now for all the ones we care about
 		completeCount := 0
-		iterationCounts := []int{}
+		var iterationCounts []int
 		for _, destCount := range destinationsToTrack {
 			// expectation here is that its cyclical
 			if destCount != 0 {
@@ -99,7 +95,6 @@ func part2(lines []string, destinationToTrack string) {
 			return
 		}
 	}
-
 }
 
 func (m Module) handlePulse(pulseData PulseData) ([]PulseData, Module) {
@@ -108,42 +103,17 @@ func (m Module) handlePulse(pulseData PulseData) ([]PulseData, Module) {
 	var generatedPulses []PulseData
 	switch m.moduleType {
 	case broadcast:
-		// forward same pulse to all destinations
-		for _, destinationModuleName := range m.destinationModuleNames {
-			// send high pulses to list
-			generatedPulses = append(generatedPulses, PulseData{
-				pulseType:       pulseData.pulseType,
-				destinationName: destinationModuleName,
-				sourceName:      m.name},
-			)
-		}
-
+		generatedPulses = generatePulses(pulseData.pulseType, m)
 	case flipFlop:
 		if pulseData.pulseType == low {
 			// ok flip
 			if m.flipFlopState == false {
 				m.flipFlopState = true
-				for _, destinationModuleName := range m.destinationModuleNames {
-					// send high pulses to list
-					generatedPulses = append(generatedPulses, PulseData{
-						pulseType:       high,
-						destinationName: destinationModuleName,
-						sourceName:      m.name},
-					)
-				}
+				generatedPulses = generatePulses(high, m)
 			} else {
 				m.flipFlopState = false
-				for _, destinationModuleName := range m.destinationModuleNames {
-					// send low to list
-					generatedPulses = append(generatedPulses, PulseData{
-						pulseType:       low,
-						destinationName: destinationModuleName,
-						sourceName:      m.name})
-				}
+				generatedPulses = generatePulses(low, m)
 			}
-
-		} else {
-			// ignore
 		}
 	case conjunction:
 		m.conjunctionModuleHistory[pulseData.sourceName] = pulseData.pulseType
@@ -157,37 +127,36 @@ func (m Module) handlePulse(pulseData PulseData) ([]PulseData, Module) {
 		}
 
 		if foundLow {
-			// send high
-			for _, destinationModuleName := range m.destinationModuleNames {
-				generatedPulses = append(generatedPulses, PulseData{
-					pulseType:       high,
-					destinationName: destinationModuleName,
-					sourceName:      m.name},
-				)
-			}
-
+			generatedPulses = generatePulses(high, m)
 		} else {
-			// send low
-			for _, destinationModuleName := range m.destinationModuleNames {
-				// send low to list
-				generatedPulses = append(generatedPulses, PulseData{
-					pulseType:       low,
-					destinationName: destinationModuleName,
-					sourceName:      m.name})
-			}
+			generatedPulses = generatePulses(low, m)
 		}
+	default:
+		panic("UnSupported Module Type")
 	}
 
 	return generatedPulses, m
 }
 
-func part1(lines []string) {
+func generatePulses(pulseType PulseType, m Module) []PulseData {
+	// forward same pulse to all destinations
+	var generatedPulses []PulseData
+	for _, destinationModuleName := range m.destinationModuleNames {
+		generatedPulses = append(generatedPulses, PulseData{
+			pulseType:       pulseType,
+			destinationName: destinationModuleName,
+			sourceName:      m.name},
+		)
+	}
+	return generatedPulses
+}
+
+func part1(lines []string) int {
 
 	lowCount, highCount := 0, 0
 	moduleMap := parseInput(lines)
 
 	for i := 0; i < 1000; i++ {
-
 		var pulseDestinationsToProcess []PulseData
 		pulseDestinationsToProcess = append(pulseDestinationsToProcess, PulseData{"broadcaster", low, "button"})
 
@@ -208,8 +177,8 @@ func part1(lines []string) {
 		}
 
 	}
-
 	fmt.Printf("Part 1, lowCount : %d, highCount: %d, Product: %d \n", lowCount, highCount, lowCount*highCount)
+	return lowCount * highCount
 }
 
 func parseInput(lines []string) map[string]Module {
@@ -239,11 +208,10 @@ func parseInput(lines []string) map[string]Module {
 			for _, destinationName := range module.destinationModuleNames {
 				destinationModule := moduleMap[destinationName]
 				if destinationModule.moduleType == conjunction {
-					destinationModule.conjunctionModuleHistory[name] = low
+					destinationModule.conjunctionModuleHistory[name] = low //default of low.
 				}
 			}
 		}
-
 	}
 
 	return moduleMap
